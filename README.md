@@ -17,4 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Screenshoot
 ![App](assets/sslayout1.png)
-![App](assets/sslayout2.png)"# koperasiundiksha" 
+![App](assets/sslayout2.png)
