@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Add the 'intl' package for number formatting
+  intl: ^0.17.0 # This package is used for formatting numbers like currency
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

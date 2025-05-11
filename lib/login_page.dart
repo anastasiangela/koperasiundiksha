@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart'; // Import HomePage untuk navigasi
+import 'home_page.dart'; // Navigasi ke halaman utama
+import 'daftar_mbanking.dart'; // Navigasi ke halaman pendaftaran
+import 'lupa_password.dart'; // Navigasi ke halaman lupa password
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordVisible = false;
+  bool _isLoading = false; // Tambahan: status loading
 
   @override
   void dispose() {
@@ -19,18 +22,33 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
     if (_formKey.currentState!.validate()) {
-      if (usernameController.text == passwordController.text) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      await Future.delayed(Duration(seconds: 2)); // Simulasi delay login
+
+      final username = usernameController.text.trim();
+      final password = passwordController.text;
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (username != 'angel') {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Username tidak sesuai')));
+      } else if (password != 'angel123') {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Password tidak sesuai')));
+      } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Username dan password harus sama dengan NIM!'),
-          ),
         );
       }
     }
@@ -134,11 +152,12 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                     ),
                                   ),
-                                  validator:
-                                      (value) =>
-                                          value!.isEmpty
-                                              ? 'Username tidak boleh kosong'
-                                              : null,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Username tidak boleh kosong';
+                                    }
+                                    return null;
+                                  },
                                 ),
                                 SizedBox(height: 15),
 
@@ -192,15 +211,18 @@ class _LoginPageState extends State<LoginPage> {
                                       },
                                     ),
                                   ),
-                                  validator:
-                                      (value) =>
-                                          value!.isEmpty
-                                              ? 'Password tidak boleh kosong'
-                                              : null,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Password tidak boleh kosong';
+                                    } else if (value.length < 8) {
+                                      return 'Password harus minimal 8 karakter';
+                                    }
+                                    return null;
+                                  },
                                 ),
                                 SizedBox(height: 20),
 
-                                // Login Button with shadow
+                                // Login Button with loading state
                                 Center(
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -224,19 +246,32 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                         padding: EdgeInsets.symmetric(
                                           vertical: 12,
-                                          horizontal: 60,
+                                          horizontal: 40,
                                         ),
-                                        minimumSize: Size(double.infinity, 50),
+                                        minimumSize: Size(200, 45),
                                       ),
-                                      onPressed: _login,
-                                      child: Text(
-                                        'Login',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                                      onPressed: _isLoading ? null : _login,
+                                      child:
+                                          _isLoading
+                                              ? SizedBox(
+                                                width: 24,
+                                                height: 24,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2.5,
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(Colors.white),
+                                                ),
+                                              )
+                                              : Text(
+                                                'Login',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                     ),
                                   ),
                                 ),
@@ -246,20 +281,43 @@ class _LoginPageState extends State<LoginPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Daftar Mbanking',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) =>
+                                                    DaftarMbankingPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Daftar M-Banking',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                    Text(
-                                      'lupa password?',
-                                      style: TextStyle(
-                                        color: Colors.blue,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => LupaPasswordPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Lupa password?',
+                                        style: TextStyle(
+                                          color: Colors.blue,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -281,7 +339,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: Color(0xFFD1D9E6),
                 child: Center(
                   child: Text(
-                    'copyright @2022 by Undiksha',
+                    'Copyright @2022 by Undiksha',
                     style: TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 ),
